@@ -88,14 +88,9 @@ class PassportMachineReadableZoneAnalyzer():
         self.pass_info = self.get_passport_info(self.mrz["raw_text"])
         self.data = self.clean_data(*self.pass_info)
 
-def main():
-    file = input("Enter file name: ")
-    if os.path.exists(file) == False:
-        print(f"{file} does not exist.")
 
-    passport_analyzer = PassportMachineReadableZoneAnalyzer(file)
-    passport_analyzer.parse()
-        
+def main():
+    ... 
 
 if __name__ == "__main__":
     main()
