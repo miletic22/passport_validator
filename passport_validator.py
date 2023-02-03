@@ -1,9 +1,10 @@
 import passporteye
 import os
-
+import pycountry
+import re
 
 def main():
-    file = "passport-images/passport3.png"
+    file = input("Enter file name: ")
     if os.path.exists(file) == False:
         print(f"{file} does not exist.")
 
@@ -22,7 +23,7 @@ def get_passport_info(mrz):
     """
     PassportEye can get this info on its own. However, it's sometimes wrong.
     Its reading of the mrz raw_text is much better, so I'm using that and
-    implementing my own reading algorithm according to ICAO standards.
+    implementing my own reading algorithm according to ICAO 9303 standards.
     """
     mrz = mrz.splitlines()
     doc_type = mrz[0][0:2]
@@ -39,6 +40,7 @@ def get_passport_info(mrz):
     optional_data = mrz[1][28:36]
 
 
+
     return (doc_type, country, name, pass_number, 
             pass_num_check, nationality, birth_date, 
             birth_date_check, sex, valid_exp_date, 
@@ -47,18 +49,47 @@ def get_passport_info(mrz):
     
 
 def digit_check(d_check, sequence):
-    sequence = [int(n) for n in sequence]
+    character_keys = {
+        "<": 0, "A": 10, "B": 11, 
+        "C": 12, "D": 13, "E": 14,
+        "F": 15, "G": 16, "H": 17, 
+        "I": 18, "J": 19, "K": 20,
+        "L": 21, "M": 22, "N": 23, 
+        "O": 24, "P": 25, "Q": 26, 
+        "R": 27, "S": 28, "T": 29, 
+        "U": 30, "V": 31, "W": 32,
+        "X": 33, "Y": 34, "Z": 35 
+    }
+    updated_sequence = []
+    for char in sequence:
+        if char.isdigit():
+            updated_sequence.append(char)
+        else:
+            updated_sequence.append(character_keys.get(char))
     d_check = int(d_check)
+    
     weighting = [7, 3, 1]
     result = []
-    for i, digit in enumerate(sequence):
-        result.append(digit * weighting[i % len(weighting)])
-        
+    for i, digit in enumerate(updated_sequence):
+        result.append(int(digit) * weighting[i % len(weighting)])
     result = sum(result) % 10
+
     return (result == d_check)
-
-
 
 if __name__ == "__main__":
     main()
- 
+
+def clean_data (doc_type, country, name, pass_number, 
+            pass_num_check, nationality, birth_date, 
+            birth_date_check, sex, valid_exp_date, 
+            valid_exp_date_check, optional_data):
+        
+    if "P" in doc_type.replace("<", ""):
+        doc_type = "Passport"
+    else:
+        doc_type = "Not a passport"
+
+    nationality = pycountry.countries.search_fuzzy(nationality)       
+    nationality = re.search("(?<=official_name=').+(?=')", str(nationality))
+    nationality = nationality.group()
+    print(nationality)
