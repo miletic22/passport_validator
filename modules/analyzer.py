@@ -1,5 +1,4 @@
 import passporteye
-import os
 import pycountry
 import re
 
