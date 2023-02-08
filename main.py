@@ -9,7 +9,6 @@ def main():
 
     passport_analyzer = analyzer.PassportMachineReadableZoneAnalyzer(file)
     passport_analyzer.parse()
-        
 
 if __name__ == "__main__":
     main()

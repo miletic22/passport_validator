@@ -24,7 +24,7 @@ class PassportMachineReadableZoneAnalyzer():
         pass_number = mrz[1][0:9]
         pass_num_check = self.digit_check(mrz[1][9], pass_number)
         nationality = mrz[1][10:13]
-        birth_date = mrz[1][13:19]
+        birth_date = mrz[1][13:19] # YYMMDD
         birth_date_check = self.digit_check(mrz[1][19], birth_date)
         sex = mrz[1][20]
         valid_exp_date = mrz[1][21:27]
@@ -65,6 +65,7 @@ class PassportMachineReadableZoneAnalyzer():
         result = sum(result) % 10
 
         return (result == d_check)
+    
     def clean_data (
             self, doc_type, country, name, pass_number, 
             pass_num_check, nationality, birth_date, 
@@ -72,21 +73,67 @@ class PassportMachineReadableZoneAnalyzer():
             valid_exp_date_check, optional_data
         ):
         
-        if "P" in doc_type.replace("<", ""):
+        if "P" in doc_type:
             doc_type = "Passport"
         else:
             doc_type = "Not a passport"
 
-        nationality = pycountry.countries.search_fuzzy(nationality)       
-        nationality = re.search("(?<=official_name=').+(?=')", str(nationality))
-        nationality = nationality.group()
-        print(nationality)
-        ...
+        country = re.match(r"\w+", country).group(0)
+        try: # Sometimes the extracted country cannot be found, e.g. extracts "D<<"
+            country = pycountry.countries.search_fuzzy(country)
+        except LookupError:
+            country = "Unknown"
+        else:
+            country = re.search("(?<=official_name=').+(?=')", str(country))
+            country = country.group()
+            if len(country) > 20:
+                country = "Unknown"
+
+        letter_groups = re.findall(r"\w+", name)
+        name = letter_groups[1], letter_groups[0]
+        
+        year, month, day = re.findall(r"\d{2}", birth_date)
+        birth_date = f"{month}/{day}/{year}"
+        
+        if sex == "F":
+            sex = "Female"
+        elif sex == "M":
+            sex = "Male"
+        else:
+            sex = "Other"
+    
+        year, month, day = re.findall(r"\d{2}", valid_exp_date)
+        valid_exp_date = f"{month}/{day}/{year}"
+        
+        return (self, doc_type, country, name, pass_number, 
+            pass_num_check, nationality, birth_date, 
+            birth_date_check, sex, valid_exp_date, 
+            valid_exp_date_check, optional_data
+            )
+    
+        # actually changed only: self, doc_type, country, name, birth_date, sex, valid_exp_date, 
+
+    def print_passport_data(self, dummy, doc_type, country, name, pass_number, 
+                            pass_num_check, nationality, birth_date, 
+                            birth_date_check, sex, valid_exp_date, 
+                            valid_exp_date_check, optional_data):
+        result = f"NAME: {name[1]}\n" \
+                f"SURNAME: {name[0]}\n" \
+                f"DOCUMENT TYPE: {doc_type}\n" \
+                f"NATIONALITY: {country}\n" \
+                f"PASS NUMBER: {pass_number} ({pass_num_check})\n" \
+                f"BIRTH DATE: {birth_date} ({birth_date_check})\n" \
+                f"SEX: {sex}\n" \
+                f"EXP. DATE: {valid_exp_date} ({valid_exp_date_check})\n" \
+                f"OPT. DATA: {optional_data}"
+        print(result)
     def parse(self):
         
         self.mrz = self.get_mrz_data(self.file)
         self.pass_info = self.get_passport_info(self.mrz["raw_text"])
         self.data = self.clean_data(*self.pass_info)
+        self.print_passport_data(*self.data)
+
 
 
 def main():
