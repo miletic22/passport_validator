@@ -89,7 +89,7 @@ class PassportMachineReadableZoneAnalyzer():
                 country = "Unknown"
 
         letter_groups = re.findall(r"\w+", name)
-        name = letter_groups[1], letter_groups[0]
+        name = [letter_groups[0], "-".join(letter_groups[1:])]
         
         year, month, day = re.findall(r"\d{2}", birth_date)
         birth_date = f"{month}/{day}/{year}"
@@ -116,8 +116,8 @@ class PassportMachineReadableZoneAnalyzer():
                             pass_num_check, nationality, birth_date, 
                             birth_date_check, sex, valid_exp_date, 
                             valid_exp_date_check, optional_data):
-        result = f"NAME: {name[1]}\n" \
-                f"SURNAME: {name[0]}\n" \
+        result = f"NAME: {name[0]}\n" \
+                f"SURNAME: {name[1]}\n" \
                 f"DOCUMENT TYPE: {doc_type}\n" \
                 f"NATIONALITY: {country}\n" \
                 f"PASS NUMBER: {pass_number} ({pass_num_check})\n" \
