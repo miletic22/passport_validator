@@ -40,7 +40,7 @@ The program currently only incorporates the following things out of ICAO 9303 st
 ## Live examples
 
 
-If provided with the following image of a [passport](https://i.imgur.com/QcHa9tW.jpg) (which is fake) it will print the following result:
+If provided with the following image of a [passport](https://i.imgur.com/QcHa9tW.jpeg) (which is fake) it will print the following result:
 ```
 NAME: GHEZALI
 SURNAME: MEHDI-MUHAMMED
