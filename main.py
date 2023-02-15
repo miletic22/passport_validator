@@ -1,6 +1,6 @@
 import os
-from modules import analyzer
-from modules import face_detection
+from passport_validators import analyzer
+from passport_validators import face_detection
 
 def main():
     file = input("Enter file name: ")
