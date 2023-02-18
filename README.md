@@ -6,8 +6,8 @@ Python Validator is a program that takes an image of a scanned passport and retu
 ## Usage
 
 ```python
-from modules import analyzer
-from modules import face_detection
+from passport_validators import analyzer
+from passport_validators import face_detection
 
 # returns the passport-holders data in a multi-line format
 passport_analyzer = analyzer.PassportMachineReadableZoneAnalyzer(file)
