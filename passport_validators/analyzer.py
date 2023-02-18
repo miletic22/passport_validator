@@ -10,6 +10,7 @@ class PassportMachineReadableZoneAnalyzer():
         mrz_data = passporteye.read_mrz(file)
         mrz_data = mrz_data.to_dict()
         return mrz_data
+        
     def get_passport_info(self, mrz):
         """
         PassportEye can get this info on its own. However, it's sometimes wrong.

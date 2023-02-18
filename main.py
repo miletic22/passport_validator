@@ -2,6 +2,7 @@ import os
 from passport_validators import analyzer
 from passport_validators import face_detection
 
+
 def main():
     file = input("Enter file name: ")
     if os.path.exists(file) == False:
