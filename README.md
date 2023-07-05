@@ -1,6 +1,6 @@
-# Python Validator v1.0
+# Python Passport Validator v1.0
 
-Python Validator is a program that takes an image of a scanned passport and returns the passport holder's information and photo.
+Python Passport Validator is a program that takes an image of a scanned passport and returns the passport holder's information and photo.
 
 
 ## Usage
